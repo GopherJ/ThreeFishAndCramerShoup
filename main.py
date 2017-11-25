@@ -31,6 +31,8 @@ sub_menu = dict_menu[str(list_menu[mode])]
 for i in range( (len(dict_menu[str(list_menu[mode])])) ):
     print('->%i<- %s' %(i,sub_menu[i]))
 
+
+
 option = int(print("please input your option: "))
 
   
