@@ -2,7 +2,6 @@
 
 import constants
 
-t = []
 x = []
 y = []
 k = []
@@ -22,6 +21,8 @@ class cipher:
             print("Error: nr must be of [72, 76, 80]")
             exit(0)
 
+         
+
         self.blockSize = blockSize or constants.BLOCK_SIZE_BITS_512
         self.nr = nr or constants.ROUNDS_76
         self.nw = blockSize/64
@@ -40,9 +41,10 @@ class cipher:
             self.r = constants.R16_16_16
         
         self.depth = constants.DEPTH_OF_D_IN_R
-
+        self.t[0], self.t[1] = tweak[0], tweak[1], tweak[0]^tweak[1]
+        
 
         
-    t[]
+
 
    
