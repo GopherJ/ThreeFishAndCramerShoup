@@ -10,7 +10,14 @@
 #'sep'.join(seq) 
 #str.replace(old, new[, max])
 
-lfsr_mode = [1,3]
+lfsr_mode = [ [1,4], 
+            [1,3],
+            [3,4,5,7],
+            [1,4,7] 
+          ]
+
+
+        
 lfsr_init_str = ['0','1','0','1','0','1','1']
 
 def encode(s): 
@@ -30,18 +37,20 @@ def lfsr(lfsr_init_str):
     return key 
 
 
-def lfsr_64bits(lfsr_init_str, lfsr_mode):
-    key = lfsr_init_str
-    new_bit = lfsr_mode[0]
-    while len(key) < 65 :
-        for i in range(1,len(lfsr_mode)): 
-            new_bit = str(int(new_bit)^int(key[(len(key)-lfsr_mode[i])]))
+def lfsr_64bits(lfsr_init_str, l_mode):
+    key = lfsr_init_str[0:len(lfsr_init_str)]
+    new_bit = lfsr_init_str[l_mode[0]]
+    print(len(lfsr_init_str),len(key))
+    while len(key) < 64 :
+        for i in range(1,len(l_mode)): 
+            new_bit = str(int(new_bit)^int(key[(len(key)-l_mode[i])]))
         key.append(new_bit)
-        #print(key)
+
+       # print(key)
     #print("key generated de 64 bits:")
     #print(key)
     str_key=''.join(key)
-    print(str_key)
+    #print(str_key)
     #######transfer str to binary 
     
     sum, base = 0, 1
@@ -55,8 +64,17 @@ def lfsr_64bits(lfsr_init_str, lfsr_mode):
   #  return [str[i] for i in range(len(str))]
 
 
-    
 
-lfsr_64bits(lfsr_init_str, lfsr_mode)
+def key_generation(nb_key):
+    k = [None]*nb_key
+    for j in range(nb_key):
+        k[j] = lfsr_64bits(lfsr_init_str,lfsr_mode[j])
+    return k
 
+
+        
+
+
+keys=key_generation(3)
+print(keys)
 
