@@ -2,6 +2,7 @@
 
 import constants
 import lib
+import transfer
 
 t = [3,4] 
 k = [None]  
@@ -18,7 +19,7 @@ r_y=4
 #mode ecb or cbc  
 #
 class cipher_threefish:
-    def __init__(self, blockSize, nr, key_originate, tweak, mode, key, c_bloc):
+    def __init__(self, blockSize, nr, key_originate, tweak, mode, c_bloc):
 
         if blockSize not in [256, 512, 1024]:
             print("Error: blockSize must be of [256, 512, 1024]")
