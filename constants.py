@@ -3,7 +3,6 @@
 '''
 definition des constants
 '''
-
 EXTENDED_KEY_SCHEDULE_CONST = 0x1bd11bdaa9fc1a22 
  
 BLOCK_SIZE_BITS_256 = 256
@@ -74,5 +73,3 @@ R16_16_16 = (
                 (47, 49, 27, 58, 37, 48, 53, 56),
 	)
 
-ECB = 0
-CBC = 1
