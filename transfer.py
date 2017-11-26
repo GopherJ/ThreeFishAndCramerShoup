@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 #!/usr/bin/python3 
 
 #chr(ascii) ->char   ascii(0~255)
@@ -80,4 +78,3 @@ def key_generation(nb_key):
 keys=key_generation(3)
 print(keys)
 
->>>>>>> 92ba4ed8790d3b7fe28646ae6af4300894ba71d1
