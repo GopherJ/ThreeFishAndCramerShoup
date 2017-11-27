@@ -1,9 +1,9 @@
 #!/usr/bin/python3
 
-"""
-lib
-"""
-import re
+# package for output font colored in cmd
+from colorama import init
+from colorama import Fore, Back, Style
+init() 
 
 def rotl(x,n):
     return (x << n) or (x >> (64 - n))
@@ -150,3 +150,30 @@ def writeMsg(arr):
 
     # print(type(bytesToUtf8(bytes([int('0b' + el, 2) for el in newArr]))))
     return bytesToUtf8(bytes(clearZero([int('0b' + el, 2) for el in newArr])))
+
+def setShellColor(str, color):
+    dict =  {
+               'black'    : '30',   # 黑色
+               'red'      : '31',   # 红色
+               'green'    : '32',   # 绿色
+               'yellow'   : '33',   # 黄色
+               'blue'     : '34',   # 蓝色
+               'purple'   : '35',   # 紫红色
+               'cyan'     : '36',   # 青蓝色
+               'white'    : '37',   # 白色
+            }
+    return '\x1b[' + dict[color] + 'm' + str
+
+def magenta(str):
+    return Fore.MAGENTA + str
+
+def green(str):
+    return Fore.GREEN + str
+
+def cyan(str):
+    return Fore.CYAN + str
+
+def read(str):
+    return Fore.RED + str
+
+
