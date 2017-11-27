@@ -71,13 +71,18 @@ beforeMenu = lib.magenta("""\nThree Fish && Cramer Shoup - Cheng JIANG && Shunji
 exitInstruction = lib.magenta("\nPress ESC to stop\nPress Enter to choose")
 
 # initialisation
-menu = [list(dictMenu)]
-n = [1,2]
-idx = 0
+menu = [list(dictMenu)]    # store menu
+n = []                  # once user has chosen, append the idx which has been chosen to n
+idx = 0                    # the sympole '=> ' should be at which line
 
 def prMenu():
     s = beforeMenu
+
+    # global definition
+    global dictMenu
     global idx
+
+    # n = 0 => user hasn't chosen, print start menu
     if len(n) == 0:
         m = menu[0]
         for i in m:
@@ -85,65 +90,93 @@ def prMenu():
                 s += lib.green('=> ') + lib.cyan(i) + '\n'
             else:
                 s += '   ' + lib.cyan(i) + '\n'
-        s += exitInstruction
-        print('\x1b[2J' + s)
-        idx = (idx + 1) % len(m)
+    # user has chosen  at least one time
     else:
         j = 0
-        s = beforeMenu
         for i in n:
             t = menu[j] 
             k = t[i]
-            m = dictMenu[k]
+            try: 
+                print(dictMenu, k)
+                m = dictMenu[k]
+            except TypeError:
+                print(menu, i, k)
+                m = dictMenu[i][k]
             if type(m) == list:
                 if len(menu) <= len(n):
                     menu.append(lib.dechunk([list(item) for item in m]))
                 if i == n[len(n) - 1]:
                     l = menu[len(menu) - 1]
-                    for i in l:
-                        if l.index(i) == idx:
-                            s += lib.green('=> ') + lib.cyan(i) + '\n'
-                        else:
-                            s += '   ' + lib.cyan(i) + '\n'
+                    if type(l) == str:
+                        s += lib.green('=> ') + lib.cyan(l) + '\n'
+                    else:
+                        for i in l:
+                            if l.index(i) == idx:
+                                s += lib.green('=> ') + lib.cyan(i) + '\n'
+                            else:
+                                s += '   ' + lib.cyan(i) + '\n'
             elif type(m) == dict:
                 if len(menu) <= len(n):
                     menu.append(list(m))
                 if i == n[len(n) - 1]:
                     l = menu[len(menu) - 1]
-                    for i in l:
-                        if l.index(i) == idx:
-                            s += lib.green('=> ') + lib.cyan(i) + '\n'
-                        else:
-                            s += '   ' + lib.cyan(i) + '\n'
+                    if type(l) == str:
+                        s += lib.green('=> ') + lib.cyan(l) + '\n'
+                    else:
+                        for i in l:
+                            if l.index(i) == idx:
+                                s += lib.green('=> ') + lib.cyan(i) + '\n'
+                            else:
+                                s += '   ' + lib.cyan(i) + '\n'
             elif type(m) == str:
                 if len(menu) <= len(n):
                     menu.append(m)
                 if i == n[len(n) - 1]:
                     l = menu[len(menu) - 1]
-                    for i in l:
-                        if l.index(i) == idx:
-                            s += lib.green('=> ') + lib.cyan(i) + '\n'
-                        else:
-                            s += '   ' + lib.cyan(i) + '\n'
+                    if type(l) == str:
+                        s += lib.green('=> ') + lib.cyan(l) + '\n'
+                    else:
+                        for i in l:
+                            if l.index(i) == idx:
+                                s += lib.green('=> ') + lib.cyan(i) + '\n'
+                            else:
+                                s += '   ' + lib.cyan(i) + '\n'
+
             dictMenu = m
             j = j + 1
+    s += exitInstruction
+    print('\x1b[2J' + s)
+    idx = (idx + 1) % len(m)
             
+def onEnter():
+    global idx
+    n.append(idx - 1)
+    idx = 0
+    prMenu()
+
+# print start menu
+prMenu()
+
+keyboard.add_hotkey(28, onEnter, args = [])
+keyboard.add_hotkey(80, prMenu, args=[])
+keyboard.wait('esc')
+
+"""
+print(n, idx, menu)
+
+
+
             if i == n[len(n) - 1]:
                 s += exitInstruction
                 print('\x1b[2J' + s)
                 idx = (idx + 1) % len(m)
     
-def onEnter():
-    global idx
-    n.append[idx]
-    idx = 0
-    prMenu()
+
 
 
 prMenu()
 print(n, idx, menu)
 
-"""
     s += exitInstruction
     print('\x1b[2J' + s)
     idx[0] = (idx[0] + 1) % len(menu[0])
@@ -206,7 +239,6 @@ pr(n)
 
 keyboard.add_hotkey(28, afterEnter, args = [n, idx])
 keyboard.add_hotkey(80, pr, args=[n])
-keyboard.wait('esc')
 
 
 
