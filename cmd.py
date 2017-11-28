@@ -5,7 +5,7 @@ import lib
 import keyboard
 import os
 
-# definition of constant
+# definition of constants
 dictMenu = {
     "Chiffrement Symétrique ThreeFish" : [
          {
@@ -74,7 +74,8 @@ dictMenu = {
 
 startInstruction = lib.magenta("""\x1b[2J\nThree Fish && Cramer Shoup - Cheng JIANG && Shunjie TU
 \n""")
-endInstruction = lib.magenta("\nPress ESC to stop\nPress 'left' and 'right' to choose")
+endInstruction = lib.magenta("""\nPress 'up' and 'down' to choose\nPress 'left' to back and 'right' to next 
+Press ESC to exit""")
 
 
 _m_ = list(dictMenu)   # first menu
@@ -102,7 +103,7 @@ def ask(arr):
         else:
             record.append(input('-> ' + arr.pop() + '  '))
     
-# print menu
+# print menu which is m[len(m) - 1] or _m_
 def pr():
     s = startInstruction
     if len(m) == 0:
@@ -119,7 +120,6 @@ def pr():
                 s += lib.green('   ') + lib.cyan(i) + '\n'
     s += endInstruction
     print(s)
-
 
 def init():
     global menu
@@ -198,12 +198,16 @@ def onDown():
     idx =  ((idx + 1) % len(_m_)) if len(n) == 0 else ((idx + 1) % len(m[len(m) - 1]))
     pr()
 
+# print start menu
 pr()
-keyboard.add_hotkey(72, onUp, args=[])
-keyboard.add_hotkey(80, onDown, args=[])
-keyboard.add_hotkey(75, onLeft, args=[])
-keyboard.add_hotkey(77, onRight, args=[])
-keyboard.wait('esc')
+
+keyboard.add_hotkey(72, onUp, args=[])    # up clicked
+keyboard.add_hotkey(80, onDown, args=[])  # down clicked
+keyboard.add_hotkey(75, onLeft, args=[])  # left clicked
+keyboard.add_hotkey(77, onRight, args=[]) # right clicked
+
+# if 'esc' clicked, exit programme
+keyboard.wait('esc') 
 
 
 

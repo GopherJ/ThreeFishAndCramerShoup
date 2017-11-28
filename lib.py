@@ -153,14 +153,14 @@ def writeMsg(arr):
 
 def setShellColor(str, color):
     dict =  {
-               'black'    : '30',   # 黑色
-               'red'      : '31',   # 红色
-               'green'    : '32',   # 绿色
-               'yellow'   : '33',   # 黄色
-               'blue'     : '34',   # 蓝色
-               'purple'   : '35',   # 紫红色
-               'cyan'     : '36',   # 青蓝色
-               'white'    : '37',   # 白色
+               'black'    : '30', 
+               'red'      : '31', 
+               'green'    : '32', 
+               'yellow'   : '33', 
+               'blue'     : '34', 
+               'purple'   : '35', 
+               'cyan'     : '36', 
+               'white'    : '37', 
             }
     return '\x1b[' + dict[color] + 'm' + str
 
@@ -177,8 +177,8 @@ def red(str):
     return Fore.RED + str
 
 
+
 # print(readFile('test.txt', 512))
 # readFile + cipher + writeFile 
 # readFile + decipher + writeFile
-
 
