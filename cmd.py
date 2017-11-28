@@ -143,7 +143,7 @@ def init():
                 menu.append(i[t])
                 m.append(lib.dechunk([list(j) for j in last(menu)]))
         
-        if first(n) in [1,2] and len(n) == 2:
+        if first(n) in [1,2,4] and len(n) == 2:
             record.append(n[1])
             # n[1] == 0 => msg
             # n[1] == 1 => fic
@@ -193,6 +193,7 @@ def onUp():
         idx = idx - 1
     pr()
 
+# listen down
 def onDown():
     global idx
     idx =  ((idx + 1) % len(_m_)) if len(n) == 0 else ((idx + 1) % len(m[len(m) - 1]))
