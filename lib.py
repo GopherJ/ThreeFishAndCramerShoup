@@ -40,12 +40,17 @@ def chunk(arr, n):
         idx += n
     return newArr
 
+"""
 def dechunk(arr):
     newArr = []
     for i in range(len(arr)):
         for j in range(len(arr[i])):
             newArr.append(arr[i][j])
     return newArr
+"""
+
+def dechunk(arr):
+    return [i for sublist in arr for i in sublist]
 
 def clearZero(arr):
     l = len(arr) - 1
