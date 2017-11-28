@@ -13,7 +13,8 @@
 lfsr_mode = [ [1,4], 
             [1,3],
             [3,4,5,7],
-            [1,4,7] 
+            [1,4,7],
+            [2,3,4,5]
           ]
 
 
@@ -40,7 +41,7 @@ def lfsr(lfsr_init_str):
 def lfsr_64bits(lfsr_init_str, l_mode):
     key = lfsr_init_str[0:len(lfsr_init_str)]
     new_bit = lfsr_init_str[l_mode[0]]
-    print(len(lfsr_init_str),len(key))
+    #print(len(lfsr_init_str),len(key))
     while len(key) < 64 :
         for i in range(1,len(l_mode)): 
             new_bit = str(int(new_bit)^int(key[(len(key)-l_mode[i])]))
@@ -75,6 +76,6 @@ def key_generation(nb_key):
         
 
 
-keys=key_generation(3)
-print(keys)
+#keys=key_generation(3)
+#print(keys)
 

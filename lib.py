@@ -150,3 +150,7 @@ def writeMsg(arr):
 
     # print(type(bytesToUtf8(bytes([int('0b' + el, 2) for el in newArr]))))
     return bytesToUtf8(bytes(clearZero([int('0b' + el, 2) for el in newArr])))
+
+
+
+#print(readFile("documents.txt",256))
