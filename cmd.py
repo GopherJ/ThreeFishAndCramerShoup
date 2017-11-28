@@ -1,4 +1,5 @@
 #!/usr/bin/python3  
+# -*- coding: UTF-8 -*-
 
 import lib
 import keyboard
@@ -76,25 +77,32 @@ startInstruction = lib.magenta("""\x1b[2J\nThree Fish && Cramer Shoup - Cheng JI
 endInstruction = lib.magenta("\nPress ESC to stop\nPress 'left' and 'right' to choose")
 
 
-_m_ = list(dictMenu)   # 一级目录
-m = []                 # 存储各级menu，从二级开始
-n = []                 # 存储已经选定的index
-idx = 0                # 当前 '=> ' 所在的条目
-menu = [dictMenu]      # 按下enter后重新计算
-record = []            # 记录用户输入
+_m_ = list(dictMenu)   # first menu
+m = []                 # store menus except the first menu, 
+n = []                 # store idx which has been chosen by user
+idx = 0                # store idx for now, which sign that '=> ' should be at which line
+menu = [dictMenu]      # store complete menu
+record = []            # record answers of user
 
 def last(arr):
     return arr[len(arr) - 1]
 
-# 判断是字典还是列表
-def isPlainList(unkown):
-    if type(unkown) == list:
-        if type(unkown[0]) == str:
-            return True
-        if type(unkown[0]) == dict:
-            return False
+def first(arr):
+    return arr[0]
+
+def clearReco(arr):
+    while len(arr) > 0:
+        arr.pop()
+
+def ask(arr):
+    n = len(arr)
+    while len(arr) > 0:
+        if len(arr) == n:
+            record.append(input('\n-> ' + arr.pop() + '  '))
+        else:
+            record.append(input('-> ' + arr.pop() + '  '))
     
-# 打印菜单
+# print menu
 def pr():
     s = startInstruction
     if len(m) == 0:
@@ -115,11 +123,8 @@ def pr():
 
 def init():
     global menu
-    if n[0] == 5:
-            qa = last(menu)[_m_[n[0]]]
-            record.append(input('\n' + qa[0]))
-            if len(record) == 1:
-                record.append(input('\r' + qa[1]))
+    if first(n) == 5:
+            ask(last(menu)[_m_[n[0]]])
             print(record)
             os._exit(0)
             # rs = cipher.hash(record)
@@ -132,51 +137,54 @@ def init():
         menu.append(last(menu)[_m_[n[0]]])
         m.append(lib.dechunk([list(i) for i in last(menu)]))
     elif len(n) > len(m):
-        t = m[len(m) - 1][n[len(n) - 1]]
+        t = last(m)[last(n)]
         for i in last(menu):
-            if list(i) == t:
+            if first(list(i)) == t:
                 menu.append(i[t])
                 m.append(lib.dechunk([list(j) for j in last(menu)]))
         
-        if n[0] in [1,2] and len(n) == 2:
+        if first(n) in [1,2] and len(n) == 2:
             record.append(n[1])
             # n[1] == 0 => msg
             # n[1] == 1 => fic
-            if len(record) == 1:
-                record.append(input(last(last(menu))))
+            ask([last(last(menu))])
+            print(record)
+            os._exit(0)
             # print(cipher.cramershoup(record))
-        elif n[0] in [0,3] and len(n) == 3:
+        elif first(n) in [0,3] and len(n) == 3:
             record.append(n[1])
             # n[1] == 0 => msg
             # n[1] == 1 => fic
             # n[2] == 0 => ecb
             # n[2] == 1 => cbc
             record.append(n[2])
-            if len(record) == 1:
-                record.append(input(last(last(menu))))
+            ask([last(last(menu))])
+            print(record)
+            os._exit(0)
 
-
-# 监听 left
+# listen left
 def onLeft():
     global idx
     try:
         m.pop()
         n.pop()
         menu.pop()
+        clearReco(record)
         idx = 0
         init()
         pr()
     except IndexError:
         pr()
 
-# 监听 right
+# listen right
 def onRight():
     global idx
     n.append(idx)
     idx = 0
     init()
+    pr()
 
-# 监听 up
+# listen up
 def onUp():
     global idx
     if idx - 1 < 0:
