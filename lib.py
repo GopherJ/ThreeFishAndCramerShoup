@@ -173,7 +173,12 @@ def green(str):
 def cyan(str):
     return Fore.CYAN + str
 
-def read(str):
+def red(str):
     return Fore.RED + str
+
+
+# print(readFile('test.txt', 512))
+# readFile + cipher + writeFile 
+# readFile + decipher + writeFile
 
 

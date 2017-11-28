@@ -2,276 +2,201 @@
 
 import lib
 import keyboard
+import os
 
+# definition of constant
 dictMenu = {
     "Chiffrement Symétrique ThreeFish" : [
          {
-            "Chiffrement D'un Message" : {
-                    "Saisir Votre Message:" : {
-                            "Choisir Votre Mode" : ["ECB", "CBC"]
-                        }
-                }
+           "Chiffrement D'un Message" : [
+                            { 
+                                "ECB" : ["Saisir Votre Message:"]
+                            },{
+                                "CBC" : ["Saisir Votre Message:"]
+                            }
+                    ]
          },{
-            "Chiffrement D'un Fichier" : {   
-                    "Saisir Le Nom Du Fichier:" : {
-                            "Choisir Votre Mode" : ["ECB", "CBC"]
-                        }
-                }
-         },
+           "Chiffrement D'un Fichier" : [   
+                            {
+                                "ECB" : ["Saisir Le Nom Du Fichier:"]
+                            },{
+                                "CBC" : ["Saisir Le Nom Du Fichier:"]
+                            }
+                    ]
+         }
      ],
     "Chiffrement De Cramer-Shoup" : [
          {
-            "Chiffrement D'un Message" : {
-                    "Saisir Votre Message:" : {
-                            "Choisir Votre Mode" : ["ECB", "CBC"]
-                        }
-                }
+           "Chiffrement D'un Message" : ["Saisir Votre Message:"] 
          },{
-            "Chiffrement D'un Fichier" : {   
-                    "Saisir Le Nom Du Fichier:" : {
-                            "Choisir Votre Mode" : ["ECB", "CBC"]
-                        }
-                }
-         },
+           "Chiffrement D'un Fichier" : ["Saisir Le Nom Du Fichier:"]
+         }
      ],
     "Hashage D'un Message" : [
          {
-            "Hashage D'un Message" : "Saisir Votre Message:"
+            "Hashage D'un Message" : ["Saisir Votre Message:"]
          },{
-            "Hashage D'un Fichier" : "Saisir Le Nom Du Fichier:"
+            "Hashage D'un Fichier" : ["Saisir Le Nom Du Fichier:"]
          }  
      ],  
     "Déciffrement Symétrique ThreeFish" : [
          {
-            "Déchiffrement D'un Message" : {
-                    "Saisir Votre Message:" : {
-                            "Choisir Votre Mode" : ["ECB", "CBC"]
-                        }
-                }
+            "Déchiffrement D'un Message" : [
+                            { 
+                                   "ECB" : ["Saisir Votre Message:"]
+                            },{
+                                   "CBC" : ["Saisir Votre Message:"]
+                            }
+                    ]
          },{
-            "Déchiffrement D'un Fichier" : {   
-                    "Saisir Le Nom Du Fichier:" : {
-                            "Choisir Votre Mode" : ["ECB", "CBC"]
-                        }
-                }
+            "Déchiffrement D'un Fichier" : [   
+                            { 
+                                   "ECB" : ["Saisir Votre Message:"] 
+                            },{
+                                   "CBC" : ["Saisir Votre Message:"]
+                            }
+                    ]
          }
-    ],  
+    ],
     "Déchiffrement De Cramer-Shoup" : [
          {
-            "Déchiffrement D'un Message" : "Saisir Votre Message:"  
+            "Déchiffrement D'un Message" : ["Saisir Votre Message:"]  
          },{
-            "Déchiffrement D'un Fichier" :    "Saisir Le Nom Du Fichier:"  
-         },
+            "Déchiffrement D'un Fichier" : ["Saisir Le Nom Du Fichier:"]
+         }
     ], 
-    "Vérification D'un Hash" :  "Saisir Votre Hashage"  
+    "Vérification D'un Hash" : [
+         "Saisir Votre Message:",
+         "Saisir Votre Hashage:"
+    ]
 }
 
-beforeMenu = lib.magenta("""\nThree Fish && Cramer Shoup - Cheng JIANG && Shunjie TU
+startInstruction = lib.magenta("""\x1b[2J\nThree Fish && Cramer Shoup - Cheng JIANG && Shunjie TU
 \n""")
-exitInstruction = lib.magenta("\nPress ESC to stop\nPress Enter to choose")
+endInstruction = lib.magenta("\nPress ESC to stop\nPress 'left' and 'right' to choose")
 
-# initialisation
-menu = [list(dictMenu)]    # store menu
-n = []                  # once user has chosen, append the idx which has been chosen to n
-idx = 0                    # the sympole '=> ' should be at which line
 
-def prMenu():
-    s = beforeMenu
+_m_ = list(dictMenu)   # 一级目录
+m = []                 # 存储各级menu，从二级开始
+n = []                 # 存储已经选定的index
+idx = 0                # 当前 '=> ' 所在的条目
+menu = [dictMenu]      # 按下enter后重新计算
+record = []            # 记录用户输入
 
-    # global definition
-    global dictMenu
-    global idx
+def last(arr):
+    return arr[len(arr) - 1]
 
-    # n = 0 => user hasn't chosen, print start menu
-    if len(n) == 0:
-        m = menu[0]
-        for i in m:
-            if m.index(i) == idx:
+# 判断是字典还是列表
+def isPlainList(unkown):
+    if type(unkown) == list:
+        if type(unkown[0]) == str:
+            return True
+        if type(unkown[0]) == dict:
+            return False
+    
+# 打印菜单
+def pr():
+    s = startInstruction
+    if len(m) == 0:
+        for i in _m_:
+            if _m_.index(i) == idx:
                 s += lib.green('=> ') + lib.cyan(i) + '\n'
             else:
-                s += '   ' + lib.cyan(i) + '\n'
-    # user has chosen  at least one time
+                s += lib.green('   ') + lib.cyan(i) + '\n'
     else:
-        j = 0
-        for i in n:
-            t = menu[j] 
-            k = t[i]
-            try: 
-                print(dictMenu, k)
-                m = dictMenu[k]
-            except TypeError:
-                print(menu, i, k)
-                m = dictMenu[i][k]
-            if type(m) == list:
-                if len(menu) <= len(n):
-                    menu.append(lib.dechunk([list(item) for item in m]))
-                if i == n[len(n) - 1]:
-                    l = menu[len(menu) - 1]
-                    if type(l) == str:
-                        s += lib.green('=> ') + lib.cyan(l) + '\n'
-                    else:
-                        for i in l:
-                            if l.index(i) == idx:
-                                s += lib.green('=> ') + lib.cyan(i) + '\n'
-                            else:
-                                s += '   ' + lib.cyan(i) + '\n'
-            elif type(m) == dict:
-                if len(menu) <= len(n):
-                    menu.append(list(m))
-                if i == n[len(n) - 1]:
-                    l = menu[len(menu) - 1]
-                    if type(l) == str:
-                        s += lib.green('=> ') + lib.cyan(l) + '\n'
-                    else:
-                        for i in l:
-                            if l.index(i) == idx:
-                                s += lib.green('=> ') + lib.cyan(i) + '\n'
-                            else:
-                                s += '   ' + lib.cyan(i) + '\n'
-            elif type(m) == str:
-                if len(menu) <= len(n):
-                    menu.append(m)
-                if i == n[len(n) - 1]:
-                    l = menu[len(menu) - 1]
-                    if type(l) == str:
-                        s += lib.green('=> ') + lib.cyan(l) + '\n'
-                    else:
-                        for i in l:
-                            if l.index(i) == idx:
-                                s += lib.green('=> ') + lib.cyan(i) + '\n'
-                            else:
-                                s += '   ' + lib.cyan(i) + '\n'
+        for i in m[len(m) - 1]:
+            if m[len(m) - 1].index(i) == idx:
+                s += lib.green('=> ') + lib.cyan(i) + '\n'
+            else:
+                s += lib.green('   ') + lib.cyan(i) + '\n'
+    s += endInstruction
+    print(s)
 
-            dictMenu = m
-            j = j + 1
-    s += exitInstruction
-    print('\x1b[2J' + s)
-    idx = (idx + 1) % len(m)
-            
-def onEnter():
+
+def init():
+    global menu
+    if n[0] == 5:
+            qa = last(menu)[_m_[n[0]]]
+            record.append(input('\n' + qa[0]))
+            if len(record) == 1:
+                record.append(input('\r' + qa[1]))
+            print(record)
+            os._exit(0)
+            # rs = cipher.hash(record)
+            # if rs == True:
+            #     print(lib.green(str(rs))
+            # else:
+            #     print(lib.red(str(rs)))
+            # exit(0)
+    elif len(n) == 1 and len(m) == 0:
+        menu.append(last(menu)[_m_[n[0]]])
+        m.append(lib.dechunk([list(i) for i in last(menu)]))
+    elif len(n) > len(m):
+        t = m[len(m) - 1][n[len(n) - 1]]
+        for i in last(menu):
+            if list(i) == t:
+                menu.append(i[t])
+                m.append(lib.dechunk([list(j) for j in last(menu)]))
+        
+        if n[0] in [1,2] and len(n) == 2:
+            record.append(n[1])
+            # n[1] == 0 => msg
+            # n[1] == 1 => fic
+            if len(record) == 1:
+                record.append(input(last(last(menu))))
+            # print(cipher.cramershoup(record))
+        elif n[0] in [0,3] and len(n) == 3:
+            record.append(n[1])
+            # n[1] == 0 => msg
+            # n[1] == 1 => fic
+            # n[2] == 0 => ecb
+            # n[2] == 1 => cbc
+            record.append(n[2])
+            if len(record) == 1:
+                record.append(input(last(last(menu))))
+
+
+# 监听 left
+def onLeft():
     global idx
-    n.append(idx - 1)
+    try:
+        m.pop()
+        n.pop()
+        menu.pop()
+        idx = 0
+        init()
+        pr()
+    except IndexError:
+        pr()
+
+# 监听 right
+def onRight():
+    global idx
+    n.append(idx)
     idx = 0
-    prMenu()
+    init()
 
-# print start menu
-prMenu()
+# 监听 up
+def onUp():
+    global idx
+    if idx - 1 < 0:
+        idx = (len(_m_) - 1) if len(n) == 0 else (len(m[len(m) - 1]) - 1)
+    else:
+        idx = idx - 1
+    pr()
 
-keyboard.add_hotkey(28, onEnter, args = [])
-keyboard.add_hotkey(80, prMenu, args=[])
+def onDown():
+    global idx
+    idx =  ((idx + 1) % len(_m_)) if len(n) == 0 else ((idx + 1) % len(m[len(m) - 1]))
+    pr()
+
+pr()
+keyboard.add_hotkey(72, onUp, args=[])
+keyboard.add_hotkey(80, onDown, args=[])
+keyboard.add_hotkey(75, onLeft, args=[])
+keyboard.add_hotkey(77, onRight, args=[])
 keyboard.wait('esc')
 
-"""
-print(n, idx, menu)
-
-
-
-            if i == n[len(n) - 1]:
-                s += exitInstruction
-                print('\x1b[2J' + s)
-                idx = (idx + 1) % len(m)
-    
-
-
-
-prMenu()
-print(n, idx, menu)
-
-    s += exitInstruction
-    print('\x1b[2J' + s)
-    idx[0] = (idx[0] + 1) % len(menu[0])
-        
-
-
-
-
-
-
-
-def prStartMenu(idx):
-    str = lib.magenta(beforeMenu)
-    for key in menu[0]:
-        if menu[0].index(key) == idx[0]:
-            str += lib.green('=> ') + lib.cyan(key) + '\n'
-        else:
-            str += '   ' + lib.cyan(key) + '\n'
-   str += exitInstruction
-    print('\x1b[2J' + str)
-    idx[0] = (idx[0] + 1) % len(menu[0])
-
-def prMiddleMenu(n, idx):
-    key = menuStart[n[0]]
-    value = dictMenu[key]
-    s = lib.magenta(beforeMenu)
-
-    if type(value) == dict:
-        for item in list(value):
-            if list(value).index(item) == idx[0]:
-                s += lib.cyan('=> ' + item) + '\n'
-            else:
-                s += lib.cyan('   ' + item) + '\n'
-    elif type(value) == str:
-        s += lib.cyan('=> ' + str) + '\n'
-    elif type(value) == list:
-        value = lib.dechunk([list(item) for item in value])
-        for item in value:
-            if value.index(item) == idx[0]:
-                s += lib.cyan('=> ' + item) + '\n'
-            else:
-                s += lib.cyan('   ' + item) + '\n'
-    
-    s += exitInstruction
-    print('\x1b[2J' + s)
-    idx[0] = (idx[0] + 1) % len()
-
-
-def pr(n):
-    # start menu
-    if len(n) == 0:
-        prStartMenu(idx)
-    elif len(n) == 1:
-        prtMiddleMenu(n, idx)
-        
-
-
-# screen at the beginning
-pr(n)
-
-keyboard.add_hotkey(28, afterEnter, args = [n, idx])
-keyboard.add_hotkey(80, pr, args=[n])
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-list_menu = list(dict_menu)
-#transfer the output of the keys of dict_menu to a list 
-
-for i in range(len(list_menu)):
-    print("->%i<- %s" %(i,list_menu[i]))
-mode = int(input("please input your method: "))
-
-sub_menu = dict_menu[str(list_menu[mode])]
-
-
-for i in range( (len(dict_menu[str(list_menu[mode])])) ):
-    print("->%i<- %s" %(i,sub_menu[i]))
-
-
-
-option = int(print("please input your option: "))
-"""
 
 
 
