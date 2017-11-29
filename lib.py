@@ -127,7 +127,7 @@ def readMsg(str, blockSize):
                 arr.append(0)
         if length > numBlockByte:
             decalage = int(numBlockByte - (length % numBlockByte))
-            for j in range(decalage):
+            for j in range(decalage):   
                 arr.append(0)
 
     # divise arr in subArr of 8 items
@@ -149,7 +149,7 @@ def writeMsg(arr):
         newArr[i] = padRight(newArr[i], '0', 8)
 
     # print(type(bytesToUtf8(bytes([int('0b' + el, 2) for el in newArr]))))
-    return bytesToUtf8(bytes(clearZero([int('0b' + el, 2) for el in newArr])))
+    return bytesToUtf8(bytes(clearZero([int('0b' +  el, 2) for el in newArr])))
 
 
 
