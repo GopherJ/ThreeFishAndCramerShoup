@@ -17,6 +17,18 @@ WORDS_4 = 4
 WORDS_8 = 8
 WORDS_16 = 16
 
+MODE_CBC = 0
+MODE_ECB = 1 
+
+INITIAL_VECTEUR_4 = [ 0x1bd11bdaa9faaa22,0x1bd11bdaa9fc1a30,0x1b12345aa9fc1a22,0x1bd22bd449fc1a22]
+INITIAL_VECTEUR_8 = [ 0x1bd11bdaa9fc1a22,0x1bd11bdaa9fc1a22,0x1bd11bdaa9fc1a22,0x1bd11bdaa9fc1a22,
+                      0x1bd11bdaa9fc1a22,0x1bd11bdaa9fc1a22,0x1bd11bdaa9fc1a22,0x1bd11bdaa9fc1a22]
+INITIAL_VECTEUR_16 =[ 0x1bd11bdaa9fc1a22,0x1bd11bdaa9fc1a22,0x1bd11bdaa9fc1a22,0x1bd11bdaa9fc1a22,
+                      0x1bd11bdaa9fc1a22,0x1bd11bdaa9fc1a22,0x1bd11bdaa9fc1a22,0x1bd11bdaa9fc1a22,
+                      0x1bd11bdaa9fc1a22,0x1bd11bdaa9fc1a22,0x1bd11bdaa9fc1a22,0x1bd11bdaa9fc1a22,
+                      0x1bd11bdaa9fc1a22,0x1bd11bdaa9fc1a22,0x1bd11bdaa9fc1a22,0x1bd11bdaa9fc1a22]
+
+
 TWEAK_VALUES = 3
 SUBKEY_INTERVAL = 4
 	
@@ -39,7 +51,7 @@ RNW_16 = 16
 RPI16_NW_16 = (0, 15, 2, 11, 6, 13, 4, 9, 14, 1, 8, 5, 10, 3, 12, 7)
  
 DEPTH_OF_D_IN_R = 8
-	
+
 R4_4_4 = (
             (5, 56),
             (36, 28),

@@ -2,23 +2,28 @@
 
 import constants
 import lib
+from transfer import key_generation
 
-t = [3,4] 
-k = [None]  
+tweaks = [3,4] 
+filename="documents.txt"
+blocksize = 256 
+nr = 76 
+nb_key = 4
+mode = constants.MODE_ECB
 
 '''vd = []
 ed = []
 fd = []
 ksd = []
 '''
-r_x=5 
-r_y=4
+r_x=1
+r_y=1
 
 #nr number of round 
 #mode ecb or cbc  
 #
 class cipher_threefish:
-    def __init__(self, blockSize, nr, key_originate, tweak, mode, key, c_bloc):
+    def __init__(self, blockSize, nr, key, tweak, mode, c_bloc):
 
         if blockSize not in [256, 512, 1024]:
             print("Error: blockSize must be of [256, 512, 1024]")
@@ -39,11 +44,11 @@ class cipher_threefish:
         #nr is the total number of rounds 
         self.nr = nr or constants.ROUNDS_76
         #nw is the total number of words 
-        self.nw  = blockSize/64
+        self.nw  = int(blockSize/64)
         self.mode = mode
 
         #c_bloc is the bloc of bytes to cipher
-        self.c_bloc = c_bloc        
+        self.c_bloc = c_bloc[0:len(c_bloc)]       
         #generation of the first round's sub key calculated by the key and tweak 
         self.sub_key = key[0:len(key)]
         self.k = key
@@ -53,7 +58,12 @@ class cipher_threefish:
         self.sub_key[self.nw-3] = ( key[self.nw-3] + self.t[0] ) % 2**64
         self.sub_key[self.nw-2] = ( key[self.nw-2] + self.t[1] ) % 2**64
         self.sub_key[self.nw-1] = key[self.nw-1] 
-
+        #calculate k (n+1)        
+        k_add = self.k[0]
+        for i in range(1,self.nw):
+            k_add = k_add^self.sub_key[i]
+        self.k.append(k_add^constants.EXTENDED_KEY_SCHEDULE_CONST)
+        
         if self.nw == 4:
             self.pi = constants.PI4_NW_4
             self.rpi = constants.RPI4_NW_4
@@ -68,8 +78,8 @@ class cipher_threefish:
             self.r = constants.R16_16_16
         
         self.depth = constants.DEPTH_OF_D_IN_R
-        t[0], t[1] = tweak[0], tweak[1]
-        t.append(tweak[0]^tweak[1])
+        self.t[0], self.t[1] = tweak[0], tweak[1]
+        self.t.append(tweak[0]^tweak[1])
 
         self.nk = nr/4 + 1
 
@@ -81,6 +91,7 @@ class cipher_threefish:
     '''
 
     def mix(self, r_x, r_y, np):
+        #print(np)
         self.c_bloc[np] = self.c_bloc[np] + self.c_bloc[np+1]
         self.c_bloc[np] = self.c_bloc[np]^ (lib.rotl(self.c_bloc[np+1], self.r[r_x % self.depth][r_y]))
 
@@ -98,39 +109,90 @@ class cipher_threefish:
 
     # update the subkey (executed after the end of one round's calculation) for the next round
     def key_update(self, c_round):
-        for i in range(self.blockSize-3):
-            self.sub_key[i] = self.k[(c_round+i)%(self.blockSize+1)]
-        self.sub_key[self.nw-3] = ( self.k[(c_round+self.nw-3)%(self.blockSize+1)] + self.t[c_round%3] ) % (2**64)
-        self.sub_key[self.nw-2] = ( self.k[(c_round+self.nw-2)%(self.blockSize+1)] + self.t[(c_round+1)%3] ) % (2**64)
-        self.sub_key[self.nw-3] = ( self.k[(c_round+self.nw-3)%(self.blockSize+1)] + c_round ) % (2**64)
-         
-
-
-
- 
+        for i in range(self.nw-3):
+            #print(i,(c_round+i),(self.nw+1))
+            self.sub_key[i] = self.k[(int(c_round/4)+i)%(self.nw+1)]
+        self.sub_key[self.nw-3] = ( self.k[(int(c_round/4)+self.nw-3)%(self.nw+1)] + self.t[int(c_round/4)%3] ) % (2**64)
+        #print((self.nw-2),((int(c_round/4)+self.nw-2)%(self.nw+1)),((int(c_round/4)+1)%3))
+        self.sub_key[self.nw-2] = ( self.k[(int(c_round/4)+self.nw-2)%(self.nw+1)] + self.t[(int(c_round/4)+1)%3] ) % (2**64)
+        self.sub_key[self.nw-3] = ( self.k[(int(c_round/4)+self.nw-3)%(self.nw+1)] + int(c_round/4) ) % (2**64)
+    
+    def addition(self):
+        for i in range(len(self.c_bloc)):
+            self.c_bloc[i] = (self.c_bloc[i] + self.sub_key[i] ) % ( 2**64)
         
+    def permutation(self):
+        tmp = self.c_bloc[0:len(self.c_bloc)]
+        for i in range(self.nw):
+            self.c_bloc[i] = tmp[self.pi[i]]
+    
 
-"""
-cl = cipher_threefish(256, 76, 0, [1,2])
-       
-x[0], x[1] = 18, 25
-cl.mix(2,1)
-print(y[0], y[1])
+keys= key_generation(nb_key)
 
-cl.demix(2,1)
-print(x[0], x[1])
+c_blocs=lib.readFile(filename, blocksize)
+#c_blocs = lib.readMsg(str, 256)
 
-c_t:ciphertext
 
+#print(c_blocs)
+'''
+#####cipher all the bloc at one time 
+cipher=[]
+for j in range(len(c_blocs)):
+    cipher.append(cipher_threefish (blocksize, nr, keys, tweaks, mode, c_blocs[j]))
+    for i in range(nr): 
+        if (i%4==0): 
+            cipher[j].addition()
+            cipher[j].key_update(i)
+        for k in range( int(cipher[j].nw/2)):
+            cipher[j].mix(r_x,r_y,k)
+        cipher[j].permutation()
+print(cipher)
+'''
+'''
+#####cipher a certain bloc 
+print(c_blocs[1])
+cipher = cipher_threefish (blocksize, nr, keys, tweaks, mode, c_blocs[1])
 for i in range(nr): 
     if (i%4==0): 
-        addition(subkey,text)
-        c1.key_update(i)
-    for j in range(self.blocksize/2): c1.mix(self,R_x,R_y,j)
-    c1.permutation(c_t,pi)
+        cipher.addition()
+        cipher.key_update(i)
+    for k in range( int(cipher.nw/2)):
+        cipher.mix(r_x,r_y,k)
+    cipher.permutation()
+#for k in range(len(cipher)):
+ #   print(cipher[k].c_bloc)
+print(c_blocs[1])
+print(cipher.c_bloc)
+'''
 
-"""
         
+cipher=[]
+    
+for j in range(len(c_blocs)):
+    cipher.append(cipher_threefish (blocksize, nr, keys, tweaks, mode, c_blocs[j]))
+    if ( j == 0):
+        if ( cipher[j].nw == 4 ) : iv = constants.INITIAL_VECTEUR_4 
+        elif ( cipher[j].nw == 8 ) : iv = constants.INITIAL_VECTEUR_8 
+        elif ( cipher[j].nw == 16 ) : iv = constants.INITIAL_VECTEUR_16 
+    else:
+       iv = cipher[j-1].c_bloc 
+    
+    #if the cipherment is on mode CBC
+    if ( mode == 1 ):
+        for i in range(cipher[j].nw):
+            cipher[j].c_bloc[i] ^= iv[i] 
+    for i in range(nr): 
+        if (i%4==0): 
+            cipher[j].addition()
+            cipher[j].key_update(i)
+        for k in range( int(cipher[j].nw/2)):
+            cipher[j].mix(r_x,r_y,k)
+        cipher[j].permutation()
+
+c_blocs_c=[]
+for i in range(len(cipher)):
+    c_blocs_c.append(cipher[i].c_bloc)
+print(c_blocs_c[0])
         
 
         
