@@ -4,6 +4,7 @@
 import lib
 import keyboard
 import os
+import signal
 
 # definition of constants
 dictMenu = {
@@ -207,9 +208,29 @@ keyboard.add_hotkey(80, onDown, args=[])  # down clicked
 keyboard.add_hotkey(75, onLeft, args=[])  # left clicked
 keyboard.add_hotkey(77, onRight, args=[]) # right clicked
 
+
+"""
+isSignInt = False
+def handler(s, f):
+    global isSignInt 
+    isSignInt = True
+ 
+signal.signal(signal.SIGINT, handler)
+signal.signal(signal.SIGTERM, handler)
+ 
+
+while True:
+  try:
+    if isSignInt:
+        print("Exit")
+        break
+  except Exception:
+    os._exit(0)
+    break
+"""
+
 # if 'esc' clicked, exit programme
 keyboard.wait('esc') 
-
 
 
 
