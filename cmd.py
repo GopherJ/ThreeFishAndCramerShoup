@@ -1,10 +1,21 @@
 #!/usr/bin/python3  
 # -*- coding: UTF-8 -*-
 
-import lib
+from util import *
+from md5 import *
+
+from cramer import encrypt
+from cramer import encryptFile
+from cramer import decrypt
+from cramer import decryptFile
+
+from signal import signal
+from signal import SIGINT
+
 import keyboard
+
 import os
-import signal
+import sys
 
 # definition of constants
 dictMenu = {
@@ -34,7 +45,7 @@ dictMenu = {
            "Chiffrement D'un Fichier" : ["Saisir Le Nom Du Fichier:"]
          }
      ],
-    "Hashage D'un Message" : [
+    "Hashage" : [
          {
             "Hashage D'un Message" : ["Saisir Votre Message:"]
          },{
@@ -73,26 +84,28 @@ dictMenu = {
     ]
 }
 
-startInstruction = lib.magenta("""\x1b[2J\nThree Fish && Cramer Shoup - Cheng JIANG && Shunjie TU
-\n""")
-endInstruction = lib.magenta("""\nPress 'up' and 'down' to choose\nPress 'left' to back and 'right' to next 
-Press ESC to exit""")
+S = magenta("""
+\x1b[2J
+Three Fish && Cramer Shoup - Cheng JIANG && Shunjie TU\n
+""")
+
+E = magenta("""
+Press 'up' and 'down' to choose\nPress 'left' to back and 'right' to next 
+Press ESC to exit
+""")
 
 
-_m_ = list(dictMenu)   # first menu
-m = []                 # store menus except the first menu, 
+M = list(dictMenu)     # F menu
+m = []                 # store menus except the F menu, 
 n = []                 # store idx which has been chosen by user
 idx = 0                # store idx for now, which sign that '=> ' should be at which line
 menu = [dictMenu]      # store complete menu
-record = []            # record answers of user
+rs = []                # rs answers of user
 
-def last(arr):
-    return arr[len(arr) - 1]
+L = lambda arr: (arr[len(arr) - 1])
+F = lambda arr: (arr[0])
 
-def first(arr):
-    return arr[0]
-
-def clearReco(arr):
+def cls(arr):
     while len(arr) > 0:
         arr.pop()
 
@@ -100,67 +113,71 @@ def ask(arr):
     n = len(arr)
     while len(arr) > 0:
         if len(arr) == n:
-            record.append(input('\n-> ' + arr.pop() + '  '))
+            rs.append(input('\n-> ' + arr.pop() + '  '))
         else:
-            record.append(input('-> ' + arr.pop() + '  '))
+            rs.append(input('-> ' + arr.pop() + '  '))
     
-# print menu which is m[len(m) - 1] or _m_
-def pr():
-    s = startInstruction
+# print menu which is m[len(m) - 1] or M
+def show():
+    s = S
     if len(m) == 0:
-        for i in _m_:
-            if _m_.index(i) == idx:
-                s += lib.green('=> ') + lib.cyan(i) + '\n'
+        for i in M:
+            if M.index(i) == idx:
+                s += green('=> ') + cyan(i) + '\n'
             else:
-                s += lib.green('   ') + lib.cyan(i) + '\n'
+                s += green('   ') + cyan(i) + '\n'
     else:
         for i in m[len(m) - 1]:
             if m[len(m) - 1].index(i) == idx:
-                s += lib.green('=> ') + lib.cyan(i) + '\n'
+                s += green('=> ') + cyan(i) + '\n'
             else:
-                s += lib.green('   ') + lib.cyan(i) + '\n'
-    s += endInstruction
+                s += green('   ') + cyan(i) + '\n'
+    s += E
     print(s)
 
 def init():
     global menu
-    if first(n) == 5:
-            ask(last(menu)[_m_[n[0]]])
-            print(record)
+    if F(n) == 5:
+            ask(L(menu)[M[n[0]]])
+            if verify(F(rs), L(rs)):
+                print(green("\n\tOk!"))
+            else:
+                print(red("\n\tError!"))
             os._exit(0)
-            # rs = cipher.hash(record)
-            # if rs == True:
-            #     print(lib.green(str(rs))
-            # else:
-            #     print(lib.red(str(rs)))
-            # exit(0)
     elif len(n) == 1 and len(m) == 0:
-        menu.append(last(menu)[_m_[n[0]]])
-        m.append(lib.dechunk([list(i) for i in last(menu)]))
+        menu.append(L(menu)[M[n[0]]])
+        m.append(dechunk([list(i) for i in L(menu)]))
     elif len(n) > len(m):
-        t = last(m)[last(n)]
-        for i in last(menu):
-            if first(list(i)) == t:
+        t = L(m)[L(n)]
+        for i in L(menu):
+            if F(list(i)) == t:
                 menu.append(i[t])
-                m.append(lib.dechunk([list(j) for j in last(menu)]))
+                m.append(dechunk([list(j) for j in L(menu)]))
         
-        if first(n) in [1,2,4] and len(n) == 2:
-            record.append(n[1])
-            # n[1] == 0 => msg
-            # n[1] == 1 => fic
-            ask([last(last(menu))])
-            print(record)
+        if F(n) in [1,2,4] and len(n) == 2:
+            rs.append(n[1])
+            ask([L(L(menu))])
+            if F(n) == 2:
+                if F(rs) == 0:
+                    print(green(md5(L(rs))))
+                elif F(rs) == 1:
+                    try:
+                        md5fic(L(rs))
+                        print(green("Ok!"))
+                    except FileNotFoundError:
+                        print(red("No Such File!"))
+            elif F(n) == 1:
+                if F(rs) == 0:
+                    print(green(encrypt(L(rs))))
+                elif F(rs) == 1:
+                    encryptFile(L(rs))
+                    print(green("Ok!"))
             os._exit(0)
-            # print(cipher.cramershoup(record))
-        elif first(n) in [0,3] and len(n) == 3:
-            record.append(n[1])
-            # n[1] == 0 => msg
-            # n[1] == 1 => fic
-            # n[2] == 0 => ecb
-            # n[2] == 1 => cbc
-            record.append(n[2])
-            ask([last(last(menu))])
-            print(record)
+        elif F(n) in [0,3] and len(n) == 3:
+            rs.append(n[1])
+            rs.append(n[2])
+            ask([L(L(menu))])
+            print(rs)
             os._exit(0)
 
 # listen left
@@ -170,12 +187,12 @@ def onLeft():
         m.pop()
         n.pop()
         menu.pop()
-        clearReco(record)
+        cls(rs)
         idx = 0
         init()
-        pr()
+        show()
     except IndexError:
-        pr()
+        show()
 
 # listen right
 def onRight():
@@ -183,55 +200,36 @@ def onRight():
     n.append(idx)
     idx = 0
     init()
-    pr()
+    show()
 
 # listen up
 def onUp():
     global idx
     if idx - 1 < 0:
-        idx = (len(_m_) - 1) if len(n) == 0 else (len(m[len(m) - 1]) - 1)
+        idx = (len(M) - 1) if len(n) == 0 else (len(m[len(m) - 1]) - 1)
     else:
         idx = idx - 1
-    pr()
+    show()
 
 # listen down
 def onDown():
     global idx
-    idx =  ((idx + 1) % len(_m_)) if len(n) == 0 else ((idx + 1) % len(m[len(m) - 1]))
-    pr()
+    idx =  ((idx + 1) % len(M)) if len(n) == 0 else ((idx + 1) % len(m[len(m) - 1]))
+    show()
 
 # print start menu
-pr()
+show()
 
-keyboard.add_hotkey(72, onUp, args=[])    # up clicked
-keyboard.add_hotkey(80, onDown, args=[])  # down clicked
-keyboard.add_hotkey(75, onLeft, args=[])  # left clicked
-keyboard.add_hotkey(77, onRight, args=[]) # right clicked
+keyboard.add_hotkey(72, onUp)    # up clicked
+keyboard.add_hotkey(80, onDown)  # down clicked
+keyboard.add_hotkey(75, onLeft)  # left clicked
+keyboard.add_hotkey(77, onRight) # right clicked
 
 
-"""
-isSignInt = False
-def handler(s, f):
-    global isSignInt 
-    isSignInt = True
- 
-signal.signal(signal.SIGINT, handler)
-signal.signal(signal.SIGTERM, handler)
- 
-
-while True:
-  try:
-    if isSignInt:
-        print("Exit")
-        break
-  except Exception:
-    os._exit(0)
-    break
-"""
+def handler(signal, frame):
+    print(green("\n\tBye!"))
+    sys.exit(0)
+signal(SIGINT, handler)
 
 # if 'esc' clicked, exit programme
 keyboard.wait('esc') 
-
-
-
-

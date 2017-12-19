@@ -3,7 +3,15 @@
 # package for output font colored in cmd
 from colorama import init
 from colorama import Fore, Back, Style
-init() 
+init(autoreset=True) 
+
+import random
+import math
+import base64
+import os
+from time import time
+
+import cts
 
 def rotl(x,n):
     return (x << n) or (x >> (64 - n))
@@ -22,6 +30,14 @@ def utf8ToBytes(str):
 def bytesToUtf8(str):
     return str.decode("utf-8", "strict")
 
+def base64Encode(str):
+    b = base64.b64encode(bytes(str, encoding="utf8"))
+    return "".join([chr(i) for i in b])
+
+def base64Decode(str):
+    b = base64.b64decode(bytes(str, encoding="utf8"))
+    return "".join([chr(i) for i in b])
+    
 def padLeft(s, char, n):
     return ('{:' + char + '<' + str(n) + '}').format(s)
 
@@ -39,15 +55,6 @@ def chunk(arr, n):
         newArr.append(arr[idx:idx+n])
         idx += n
     return newArr
-
-"""
-def dechunk(arr):
-    newArr = []
-    for i in range(len(arr)):
-        for j in range(len(arr[i])):
-            newArr.append(arr[i][j])
-    return newArr
-"""
 
 def dechunk(arr):
     return [i for sublist in arr for i in sublist]
@@ -156,19 +163,6 @@ def writeMsg(arr):
     # print(type(bytesToUtf8(bytes([int('0b' + el, 2) for el in newArr]))))
     return bytesToUtf8(bytes(clearZero([int('0b' + el, 2) for el in newArr])))
 
-def setShellColor(str, color):
-    dict =  {
-               'black'    : '30', 
-               'red'      : '31', 
-               'green'    : '32', 
-               'yellow'   : '33', 
-               'blue'     : '34', 
-               'purple'   : '35', 
-               'cyan'     : '36', 
-               'white'    : '37', 
-            }
-    return '\x1b[' + dict[color] + 'm' + str
-
 def magenta(str):
     return Fore.MAGENTA + str
 
@@ -181,9 +175,11 @@ def cyan(str):
 def red(str):
     return Fore.RED + str
 
+def IsExistDir(path):
+    return os.path.isdir(path)
 
+def IsExistFile(path):
+    return os.path.exists(path)
 
-# print(readFile('test.txt', 512))
-# readFile + cipher + writeFile 
-# readFile + decipher + writeFile
-
+def byteFromHex(str):
+    return bytearray.fromhex(str)
