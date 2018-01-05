@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 # package for output font colored in cmd
 from   time     import time
 from   colorama import init
