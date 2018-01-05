@@ -12,8 +12,8 @@ WORDS_4 = 4
 WORDS_8 = 8
 WORDS_16 = 16
 
-MODE_CBC = 0
-MODE_ECB = 1 
+MODE_CBC = 1
+MODE_ECB = 0 
 
 INITIAL_VECTEUR_4 = [ 0x1bd11bdaa9faaa22,0x1bd11bdaa9fc1a30,0x1b12345aa9fc1a22,0x1bd22bd449fc1a22]
 INITIAL_VECTEUR_8 = [ 0x1bd11bdaa9fc1a22,0x1bd11bdaa9fc1a22,0x1bd11bdaa9fc1a22,0x1bd11bdaa9fc1a22,
@@ -49,7 +49,8 @@ DEPTH_OF_D_IN_R = 8
 
 R4_4_4 = (
             (5, 56),
-            (36, 28),
+#           (36, 28),
+            (36, 2),
             (13, 46),
             (58, 44),
             (26, 20),

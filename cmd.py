@@ -9,6 +9,10 @@ from   cramer import decrypt
 from   cramer import decryptFile
 from   signal import signal
 from   signal import SIGINT
+from   fish   import cipher_threefish_msg
+from   fish   import cipher_threefish_file
+from   fish   import decipher_threefish_msg
+from   fish   import decipher_threefish_file
 import keyboard
 import os
 import sys
@@ -186,7 +190,47 @@ def init():
             rs.append(n[1])
             rs.append(n[2])
             ask([L(L(menu))])
-            print(rs)
+
+            if F(n) == 0:
+                MSG_FILE, ECB_CBC, s = rs
+                if  MSG_FILE == 0:
+                    if ECB_CBC == 0:
+                        print(green(cipher_threefish_msg(s, cts.MODE_ECB)))
+                    elif ECB_CBC == 1:
+                        print(green(cipher_threefish_msg(s, cts.MODE_CBC)))
+                elif MSG_FILE == 1:
+                    if ECB_CBC == 0:
+                        try:
+                            cipher_threefish_file(s, cts.MODE_ECB)
+                            print(green("Ok!"))
+                        except FileNotFoundError:
+                            print(magenta("No Such File!"))
+                    elif ECB_CBC == 1:
+                        try:
+                            cipher_threefish_file(s, cts.MODE_CBC)
+                            print(green("Ok!"))
+                        except FileNotFoundError:
+                            print(magenta("No Such File!"))
+            elif F(n) == 3:
+                MSG_FILE, ECB_CBC, s = rs
+                if  MSG_FILE == 0:
+                    if ECB_CBC == 0:
+                        print(green(decipher_threefish_msg(s, cts.MODE_ECB)))
+                    elif ECB_CBC == 1:
+                        print(green(decipher_threefish_msg(s, cts.MODE_CBC)))
+                elif MSG_FILE == 1:
+                    if ECB_CBC == 0:
+                        try:
+                            decipher_threefish_file(s, cts.MODE_ECB)
+                            print(green("Ok!"))
+                        except FileNotFoundError:
+                            print(magenta("No Such File!"))
+                    elif ECB_CBC == 1:
+                        try:
+                            decipher_threefish_file(s, cts.MODE_CBC)
+                            print(green("Ok!"))
+                        except FileNotFoundError:
+                            print(magenta("No Such File!"))
             os._exit(0)
 
 # listen left

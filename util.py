@@ -9,11 +9,24 @@ import base64
 import os
 import cts
 
+#===========================================
+lfsr_mode = [ [1,4], 
+            [1,3],
+            [3,4,5,7],
+            [1,4,7],
+            [2,3,4,5]]
+        
+lfsr_init_str = ['0','1','0','1','0','1','1']
+#===========================================
+
 def rotl(x,n):
-    return (x << n) or (x >> (64 - n))
+    a = x >> n 
+    r = (x - a * 2**n)*(2**(64-n))
+    return int(a + r)
 
 def rotr(x, n):
-    return (x >> n) or (x << (64 - n))
+    b = padRight(bin(x).replace("0b", ""), "0", 64)
+    return int("".join(b[n:] + b[0:n]), 2) 
 
 def per(list, pi):
     t = list[0:len(list)]
@@ -113,8 +126,6 @@ def writeFile(filename, arr):
     fo.write(bytesToUtf8(bytes(clearZero([int('0b' + el, 2) for el in newArr]))))
     return fo.close()
 
-# writeFile('test.py', readFile('README.md',256))
-
 def readMsg(str, blockSize):
     str_utf8 = str.encode("utf-8")
 
@@ -177,6 +188,42 @@ def IsExistDir(path):
 def IsExistFile(path):
     return os.path.exists(path)
 
-def byteFromHex(str):
-    return bytearray.fromhex(str)
 
+def encode(s): 
+    return ' '.join([bin(ord(c)).replace('0b', '') for c in s])
+
+def decode(s):
+    return ''.join([chr(i) for i in [int(b, 2) for b in s.split(' ')]])
+
+def lfsr(lfsr_init_str):
+    key = lfsr_init_str
+    while len(key) < 65 :
+        key.append( key[(len(key)-1)]^key[(len(key)-3)])
+        #print(key)
+    return key 
+
+
+def lfsr_64bits(lfsr_init_str, l_mode):
+    key = lfsr_init_str[0:len(lfsr_init_str)]
+    new_bit = lfsr_init_str[l_mode[0]]
+
+    #print(len(lfsr_init_str),len(key))
+    while len(key) < 64 :
+        for i in range(1,len(l_mode)): 
+            new_bit = str(int(new_bit)^int(key[(len(key)-l_mode[i])]))
+        key.append(new_bit)
+
+    #transfer str to binary 
+    str_key=''.join(key)
+    
+    sum, base = 0, 1
+    for i in range(len(str_key)):
+        sum += int(str_key[-i])*base
+        base *= 2
+    return sum 
+
+def key_generation(nb_key):
+    k = [None]*nb_key
+    for j in range(nb_key):
+        k[j] = lfsr_64bits(lfsr_init_str,lfsr_mode[j])
+    return k
