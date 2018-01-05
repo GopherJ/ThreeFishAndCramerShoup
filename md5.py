@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 from   util import chunk
 from   util import dechunk
 from   util import padLeft as PL
@@ -14,6 +12,7 @@ B = 0xefcdab89
 C = 0x98badcfe
 D = 0x10325476
 
+# ENDFLAG
 ENDFLAG = "1"
 
 L = lambda    x,n: (((x & 0xffffffff) << n) | ((x & 0xffffffff) >> (32 - n))) & (0xffffffff)
