@@ -1,14 +1,14 @@
 #!/usr/bin/python3  
 # -*- coding: UTF-8 -*-
 
-from util   import *
-from md5    import *
-from cramer import encrypt
-from cramer import encryptFile
-from cramer import decrypt
-from cramer import decryptFile
-from signal import signal
-from signal import SIGINT
+from   util   import *
+from   md5    import *
+from   cramer import encrypt
+from   cramer import encryptFile
+from   cramer import decrypt
+from   cramer import decryptFile
+from   signal import signal
+from   signal import SIGINT
 import keyboard
 import os
 import sys

@@ -1,30 +1,15 @@
 #!/usr/bin/python3
 
 # package for output font colored in cmd
-from colorama import init
-from colorama import Fore, Back, Style
+from   time     import time
+from   colorama import init
+from   colorama import Fore, Back, Style
 init(autoreset=True) 
-
 import random
 import math
 import base64
 import os
-from time import time
-
 import cts
-
-"""
-def R(x, n):
-    b = bin(x).replace("0b", "")
-    return int("".join(b[-n:] + b[0:64-n]), 2)
-
-def L(x, n):
-    b = bin(x).replace("0b", "")
-    return int("".join(b[n:0] + b[n:]), 2) 
-
-print(L(R(10280, 2), 2))
-"""
-    
 
 def rotl(x,n):
     return (x << n) or (x >> (64 - n))
