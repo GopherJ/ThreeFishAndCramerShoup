@@ -3,6 +3,11 @@
 The Implementation Of ThreeFish And CramerShoup In Python3
 ```
 
+## Environement
+```
+Python3.6.3 + Any(windows, darwin, linux)
+```
+
 ## Installation
 ```
 git clone https://github.com/GopherJ/ThreeFishAndCramerShoup
