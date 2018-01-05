@@ -14,6 +14,11 @@ PUBKEY           = "id_cramer_pub"
 SECKEY           = "id_cramer"
 CANTFOUNDKEYDIR  = "Can't found {0} in {1}".format(DIR, HOME)
 CANTFOUNDSECKEY  = "Can't found {0} in {1}".format(SECKEY, DIR)
+INFOGENPRIME     = "Looking for secure prime..."
+INFOGENERATOR    = "Looking for generators..."
+INFOKEY          = "Generating public, private key..."
+INFOFINISHED     = "Finished"
+INFOWRITING      = "Writing..."
 #================================
 
 # hash
@@ -45,10 +50,16 @@ def GetTwoGenerator(p, q):
 def keySchedule(n):
     global P, Q, A1, A2, X, Y, W
 
+    print(green(INFOGENPRIME))
     P, Q = GetTwoPrime(n)
+    print(green(INFOFINISHED))
+
+    print(green(INFOGENERATOR))
     g = GetTwoGenerator(P, Q)
     A1, A2 = g
+    print(green(INFOFINISHED))
 
+    print(green(INFOKEY))
     x1, x2, y1, y2, w = [rand(0, P-1) for i in range(5)]
 
     X = pow(A1, x1, P) * pow(A2, x2, P) % P
@@ -60,9 +71,11 @@ def keySchedule(n):
 
     Pub = "{{}}".join([hex(i).replace("0x", "") for i in pubkey])
     Sec = "{{}}".join([hex(i).replace("0x", "") for i in seckey])
+    print(green(INFOFINISHED))
 
+    
+    print(green(INFOWRITING))
     os.chdir(HOME)
-
     if not IsExistDir(DIR):
         os.mkdir(DIR)
     os.chdir(DIR)
@@ -73,7 +86,7 @@ def keySchedule(n):
     with open(SECKEY, "w+") as f:
         f.write(base64Encode(Sec))
 
-    print('\n---BEGIN CRAMER PUBLICKEY---\n' + magenta(re.sub(r'{{}}', '\n', Pub)) + '\n---END   CRAMER PUBLICKEY---')
+    print('\n---BEGIN CRAMER PUBLICKEY---\n' + magenta(re.sub(r'{{}}', '\n', Pub)) + '\n---END   CRAMER PUBLICKEY---\n')
 
 # chiffrer a message
 def encrypt(s):
@@ -85,7 +98,6 @@ def encrypt(s):
             keySchedule(1024)
     else:
         keySchedule(1024)
-        os.chdir(DIR)
     
     with open(PUBKEY, "r") as f:
         pubkey = re.split("{{}}", base64Decode(f.read()))
