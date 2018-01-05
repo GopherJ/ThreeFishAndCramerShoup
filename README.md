@@ -10,7 +10,7 @@ git clone https://github.com/GopherJ/ThreeFishAndCramerShoup
 
 ## Support
 - [md5](https://github.com/GopherJ/ThreeFishAndCramerShoup/blob/master/md5.py)
-- [threefish]()
+- [threefish](https://github.com/GopherJ/ThreeFishAndCramerShoup/blob/master/fish.py)
 - [cramershoup](https://github.com/GopherJ/ThreeFishAndCramerShoup/blob/master/cramer.py)
 
 ## Utilisation
