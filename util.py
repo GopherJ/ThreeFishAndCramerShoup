@@ -13,6 +13,19 @@ from time import time
 
 import cts
 
+"""
+def R(x, n):
+    b = bin(x).replace("0b", "")
+    return int("".join(b[-n:] + b[0:64-n]), 2)
+
+def L(x, n):
+    b = bin(x).replace("0b", "")
+    return int("".join(b[n:0] + b[n:]), 2) 
+
+print(L(R(10280, 2), 2))
+"""
+    
+
 def rotl(x,n):
     return (x << n) or (x >> (64 - n))
 
@@ -183,3 +196,4 @@ def IsExistFile(path):
 
 def byteFromHex(str):
     return bytearray.fromhex(str)
+

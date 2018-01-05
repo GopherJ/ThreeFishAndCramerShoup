@@ -1,11 +1,13 @@
-from random import randint
-from datetime import datetime
+from   random     import randint
+from   datetime   import datetime
+from   cts        import sps
+from   subprocess import Popen
+from   subprocess import PIPE
+from   platform   import system
+import os
+import re
 
-from cts import sps
-
-from subprocess import Popen
-from subprocess import PIPE
-
+DIR = os.path.dirname(os.path.realpath(__file__))
 
 def rand(min, max):
     return randint(min, max)
@@ -84,18 +86,50 @@ def GetPrime(bits, p):
         n = randNbit(bits)
     return n
 
-def GetPrimeFromExe(n):
-    b = Popen(["cmd", "/C", "GenPrime.exe {0}".format(n)], stdout=PIPE).communicate()[0]
+def GetPrimeFromScript(n):
+    s = "{0}\script\GenPrime".format(DIR) 
+
+    if system() == "Windows":
+        s += ".exe"
+        s = os.path.abspath(s)
+        arr = ["cmd", "/C", "{0} {1}".format(s, n)]
+    elif system() == "Darwin":
+        s += "_darwin"
+        s = os.path.abspath(s)
+        arr = ["{0} {1}".format(s, n)]
+    elif system() == "Linux":
+        s += "_linux"
+        s = os.path.abspath(s)
+        arr = ["{0} {1}".format(s, n)]
+
+    b = Popen(arr, stdout=PIPE).communicate()[0]
     arr = []
     for i in b:
         arr.append(i)
     return int("".join([chr(i) for i in arr]), 16)
 
-def isProbablePrimeFromExe(n, p):
-    s = bin(n).replace("0b", "")
-    t = Popen(["cmd", "/C", "isProbablePrime.exe {0} {1} {2}".format(s, 2, p)], stdout=PIPE).communicate()[0]
-    rs = "".join([chr(i) for i in t])
-    if rs == "true":
+
+def isProbablePrimeFromScript(n, p):
+    s = "{0}\script\isProbablePrime".format(DIR)
+    b = bin(n).replace("0b", "")
+
+    if system() == "Windows":
+        s += ".exe"
+        s = os.path.abspath(s)
+        arr = ["cmd", "/C", "{0} {1} {2} {3}".format(s, b, 2, p)]
+    elif system() == "Darwin":
+        s += "_darwin"
+        s = os.path.abspath(s)
+        arr = ["{0} {1} {2} {3}".format(s, b, 2, p)]
+    elif system() == "Linux":
+        s += "_linux"
+        s = os.path.abspath(s)
+        arr = ["{0} {1} {2} {3}".format(s, b, 2, p)]
+
+    t = Popen(arr, stdout=PIPE).communicate()[0]
+    T = "".join([chr(i) for i in t])
+    if T == "true":
         return True
-    elif rs == "false":
+    elif T == "false": 
         return False
+

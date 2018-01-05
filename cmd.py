@@ -1,19 +1,15 @@
 #!/usr/bin/python3  
 # -*- coding: UTF-8 -*-
 
-from util import *
-from md5 import *
-
+from util   import *
+from md5    import *
 from cramer import encrypt
 from cramer import encryptFile
 from cramer import decrypt
 from cramer import decryptFile
-
 from signal import signal
 from signal import SIGINT
-
 import keyboard
-
 import os
 import sys
 
@@ -115,7 +111,7 @@ def ask(arr):
         if len(arr) == n:
             rs.append(input('\n-> ' + arr.pop() + '  '))
         else:
-            rs.append(input('-> ' + arr.pop() + '  '))
+            rs.append(input('-> '   + arr.pop() + '  '))
     
 # print menu which is m[len(m) - 1] or M
 def show():
@@ -165,13 +161,26 @@ def init():
                         md5fic(L(rs))
                         print(green("Ok!"))
                     except FileNotFoundError:
-                        print(red("No Such File!"))
+                        print(magenta("No Such File!"))
             elif F(n) == 1:
                 if F(rs) == 0:
                     print(green(encrypt(L(rs))))
                 elif F(rs) == 1:
-                    encryptFile(L(rs))
-                    print(green("Ok!"))
+                    try:
+                        print(L(rs))
+                        encryptFile(L(rs))
+                        print(green("Ok!"))
+                    except FileNotFoundError:
+                        print(magenta("No Such File!"))
+            elif F(n) == 4:
+                if F(rs) == 0:
+                    print(green(decrypt(L(rs))))
+                elif F(rs) == 1:
+                    try:
+                        decryptFile(L(rs))
+                        print(green("Ok!"))
+                    except FileNotFoundError:
+                        print(magenta("No Such File!"))
             os._exit(0)
         elif F(n) in [0,3] and len(n) == 3:
             rs.append(n[1])
