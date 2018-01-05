@@ -3,6 +3,11 @@
 The Implementation Of ThreeFish And CramerShoup In Python3
 ```
 
+## Installation
+```
+git clone https://github.com/GopherJ/ThreeFishAndCramerShoup
+```
+
 ## Support
 - [md5](https://github.com/GopherJ/ThreeFishAndCramerShoup/blob/master/md5.py)
 - [threefish]()
@@ -10,7 +15,8 @@ The Implementation Of ThreeFish And CramerShoup In Python3
 
 ## Utilisation
 ```
-python cmd.py
+cd ThreeFishAndCramerShoup
+./cmd.py
 ```
 
 ## Demo

@@ -7,8 +7,8 @@ setup(
     description = 'The Implementation Of ThreeFish And CramerShoup In Python3',
     license = 'MIT License',
     install_requires = [
-        'keyboard == 0.3.9',
-        'colorama == 0.11.0',
+        'colorama== 0.3.9',
+        'keyboard== 0.11.0',
     ],
     author = 'GopherJ',
     author_email = 'cocathecafe@gmail.com',
