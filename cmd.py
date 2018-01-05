@@ -171,7 +171,6 @@ def init():
                     print(green(encrypt(L(rs))))
                 elif F(rs) == 1:
                     try:
-                        print(L(rs))
                         encryptFile(L(rs))
                         print(green("Ok!"))
                     except FileNotFoundError:
