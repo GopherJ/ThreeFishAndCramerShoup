@@ -12,4 +12,4 @@ python cmd.py
 ```
 
 ## Demo
-![demo](./image/demo.png)
+![](./image/demo.PNG)
