@@ -31,6 +31,44 @@ def GetPrimeFromScript(n):
         arr.append(i)
     return int("".join([chr(i) for i in arr]), 16)
 
+"""
+// GenPrime.go
+// https://github.com/golang/go/blob/master/src/crypto/rand/util.go
+package main
+
+import (
+  "crypto/rand"
+  "fmt"
+  "math/big"
+  "os"
+  "strconv"
+)
+
+func main() {
+    var p *big.Int
+    var bits int
+    var err error
+
+    if len(os.Args) == 1 {
+         bits = 1024
+    } else {
+        bits, err = strconv.Atoi(os.Args[1])
+        if err != nil {
+             panic(err)
+        }
+    }
+
+    p, err = rand.Prime(rand.Reader, bits)
+
+    if err != nil {
+        panic(err)
+    }
+
+    fmt.Printf("%x", p)
+
+}
+"""
+
 def isProbablePrimeFromScript(n, p):
     s = "{0}\script\isProbablePrime".format(DIR)
     b = bin(n).replace("0b", "")
@@ -54,3 +92,28 @@ def isProbablePrimeFromScript(n, p):
         return True
     elif T == "false": 
         return False
+
+"""
+// isProbablePrime.go
+// https://github.com/golang/go/blob/master/src/math/big/prime.go
+package main
+
+import (
+    "fmt"
+    "math/big"
+    "os"
+    "strconv"
+)
+
+func main(){
+    s, b, n := os.Args[1], os.Args[2], os.Args[3]
+    p := new(big.Int)
+    i, err := strconv.Atoi(b)
+    p.SetString(s, i)
+    i, err = strconv.Atoi(n)
+    if err != nil {
+        panic("Error")
+    }
+    fmt.Printf("%t", p.ProbablyPrime(i))
+}
+"""

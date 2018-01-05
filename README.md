@@ -15,3 +15,6 @@ python cmd.py
 
 ## Demo
 ![](./image/demo.PNG)
+
+## License
+MIT License
