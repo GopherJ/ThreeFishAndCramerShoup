@@ -79,8 +79,8 @@ dictMenu = {
          }
     ], 
     "Vérification D'un Hash" : [
-         "Saisir Votre Message:",
-         "Saisir Votre Hashage:"
+         "Saisir Votre Hashage:",
+         "Saisir Votre Message:"
     ]
 }
 
