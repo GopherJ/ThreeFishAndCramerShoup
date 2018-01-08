@@ -72,7 +72,6 @@ def keySchedule(n):
     Pub = "{{}}".join([hex(i).replace("0x", "") for i in pubkey])
     Sec = "{{}}".join([hex(i).replace("0x", "") for i in seckey])
     print(green(INFOFINISHED))
-
     
     print(green(INFOWRITING))
     os.chdir(HOME)
@@ -85,8 +84,7 @@ def keySchedule(n):
 
     with open(SECKEY, "w+") as f:
         f.write(base64Encode(Sec))
-
-    print('\n---BEGIN CRAMER PUBLICKEY---\n' + magenta(re.sub(r'{{}}', '\n', Pub)) + '\n---END   CRAMER PUBLICKEY---\n')
+    print("")
 
 # chiffrer a message
 def encrypt(s):
