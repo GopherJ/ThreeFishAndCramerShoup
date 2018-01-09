@@ -117,25 +117,24 @@ def encrypt(s):
 # dechiffrer a message
 def decrypt(s):
     os.chdir(HOME)
-    if IsExistDir(DIR):
-        os.chdir(DIR)
-        if IsExistFile(SECKEY):
-            with open(SECKEY, 'r') as f:
-                sec = re.split("{{}}", base64Decode(f.read()))
-                msg = re.split("{{}}", base64Decode(s))
-
-                B1, B2, c, v, P   = [int(i, 16) for i in msg]
-                x1, x2, y1, y2, w = [int(i, 16) for i in sec]
-
-                bt = int(H(B1, B2, c), 16)
-                V  = pow(B1, x1 + y1 * bt, P) * pow(B2, x2 + y2 * bt, P) % P 
-
-                if v == V:
-                    return bytes([int(i, 16) for i in chunk(hex(c // pow(B1, w, P)).replace("0x", ""), 2)]).decode("utf8", "strict")
-        else:
-            raise Exception(CANTFOUNDSECKEY)
-    else:
+    if not IsExistDir(DIR):
         raise Exception(CANTFOUNDKEYDIR)
+    os.chdir(DIR)
+    if not IsExistFile(SECKEY):
+        raise Exception(CANTFOUNDSECKEY)
+ 
+    with open(SECKEY, 'r') as f:
+        sec = re.split("{{}}", base64Decode(f.read()))
+        msg = re.split("{{}}", base64Decode(s))
+
+        B1, B2, c, v, P   = [int(i, 16) for i in msg]
+        x1, x2, y1, y2, w = [int(i, 16) for i in sec]
+
+        bt = int(H(B1, B2, c), 16)
+        V  = pow(B1, x1 + y1 * bt, P) * pow(B2, x2 + y2 * bt, P) % P 
+
+        if v == V:
+            return bytes([int(i, 16) for i in chunk(hex(c // pow(B1, w, P)).replace("0x", ""), 2)]).decode("utf8", "strict")
 
 # chiffrer a file
 def encryptFile(fic):
