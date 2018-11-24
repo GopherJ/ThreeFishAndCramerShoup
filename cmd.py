@@ -1,18 +1,19 @@
 #!/usr/bin/python3  
 # -*- coding: UTF-8 -*-
 
-from   util   import *
-from   md5    import *
-from   cramer import encrypt
-from   cramer import encryptFile
-from   cramer import decrypt
-from   cramer import decryptFile
-from   signal import signal
-from   signal import SIGINT
-from   fish   import cipher_threefish_msg
-from   fish   import cipher_threefish_file
-from   fish   import decipher_threefish_msg
-from   fish   import decipher_threefish_file
+from   util     import *
+from   md5      import *
+from   cramer   import encrypt
+from   cramer   import encryptFile
+from   cramer   import decrypt
+from   cramer   import decryptFile
+from   signal   import signal
+from   signal   import SIGINT
+from   fish     import cipher_threefish_msg
+from   fish     import cipher_threefish_file
+from   fish     import decipher_threefish_msg
+from   fish     import decipher_threefish_file
+from   platform import system
 import keyboard
 import os
 import sys
@@ -272,11 +273,17 @@ def onDown():
 # print start menu
 show()
 
-keyboard.add_hotkey(72, onUp)    # up clicked
-keyboard.add_hotkey(80, onDown)  # down clicked
-keyboard.add_hotkey(75, onLeft)  # left clicked
-keyboard.add_hotkey(77, onRight) # right clicked
 
+if system() == 'Windows':
+    keyboard.add_hotkey(72, onUp)     # up clicked
+    keyboard.add_hotkey(80, onDown)   # down clicked
+    keyboard.add_hotkey(75, onLeft)   # left clicked
+    keyboard.add_hotkey(77, onRight)  # right clicked
+else:
+    keyboard.add_hotkey(103, onUp)    # up clicked
+    keyboard.add_hotkey(108, onDown)  # down clicked
+    keyboard.add_hotkey(105, onLeft)  # left clicked
+    keyboard.add_hotkey(106, onRight) # right clicked
 
 def handler(signal, frame):
     print(green("\n\tBye!"))
